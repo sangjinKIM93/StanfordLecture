@@ -9,8 +9,10 @@
 import SwiftUI
 
 //** ViewModel
-class EmojiMemoryGame {
-    private var model: MemoryGame<String> = createMemoryGame() // 프로퍼티에 메서드를 넣을 수 없어. 왜냐하면 메서드에 대한 내용이 생성되기 전에 저장 메모리가 생성되거든. 단 staic으로 선언하면 메모리에 올라가 있기 때문에 가능함
+class EmojiMemoryGame: ObservableObject {
+    //*publish wrapper다. 얘의 역할은 해당 변수가 변할때마다 obejctWillChange를 호출한다.
+    // => liveData 같은 놈이군
+    @Published private var model: MemoryGame<String> = createMemoryGame() // 프로퍼티에 메서드를 넣을 수 없어. 왜냐하면 메서드에 대한 내용이 생성되기 전에 저장 메모리가 생성되거든. 단 staic으로 선언하면 메모리에 올라가 있기 때문에 가능함
         
     static func createMemoryGame() -> MemoryGame<String> {
         let emojis: Array<String> = ["👻","🎃"]

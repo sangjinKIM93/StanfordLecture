@@ -8,8 +8,8 @@
 
 import SwiftUI
 
-struct ContentView: View {
-    var viewModel: EmojiMemoryGame
+struct EmojiMemoryView: View {
+    @ObservedObject var viewModel: EmojiMemoryGame
     
     // 이 var는 메모리에 저장되는 것이 아니라 불릴때마다 계산되는 놈임.
     var body: some View {
@@ -25,7 +25,7 @@ struct ContentView: View {
             }
                 .padding(10)
                 .foregroundColor(Color.orange)
-                .font(Font.largeTitle)
+                
         }
     }
 }
@@ -33,17 +33,29 @@ struct ContentView: View {
 //이런식으로 모듈화가 가능
 struct CardView: View {
     var card: MemoryGame<String>.Card
-    
     var body: some View {
-        ZStack {
-            if card.inFaceUp {
-                RoundedRectangle(cornerRadius: 10.0).stroke()
-                RoundedRectangle(cornerRadius: 10.0).fill(Color.white)
-                Text(card.content)
-            } else {
-                RoundedRectangle(cornerRadius: 10.0).fill()
+        //GeometryReader를 활용하면 디바이스 크기에 맞게 size를 설정할 수 있어.
+        GeometryReader { geometry in
+            ZStack {
+                if self.card.isFaceUp {
+                    RoundedRectangle(cornerRadius: self.cornerRadius).stroke(lineWidth: self.edgeLineWidth)
+                    RoundedRectangle(cornerRadius: self.cornerRadius).fill(Color.white)
+                    Text(self.card.content)
+                } else {
+                    RoundedRectangle(cornerRadius: self.cornerRadius).fill()
+                }
             }
+            .font(Font.system(size: self.fontSize(for: geometry.size)))
         }
+    }
+    
+    //MARK: - Drawing constants
+    
+    let cornerRadius: CGFloat = 10.0
+    let edgeLineWidth: CGFloat = 3
+    
+    func fontSize(for size: CGSize) -> CGFloat {
+        min(size.width, size.height) * 0.75
     }
 }
 
@@ -70,6 +82,6 @@ struct CardView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(viewModel: EmojiMemoryGame())
+        EmojiMemoryView(viewModel: EmojiMemoryGame())
     }
 }
